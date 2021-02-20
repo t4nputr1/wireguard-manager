@@ -108,7 +108,7 @@ WIREGUARD_ADD_PEER_CONFIG="$WIREGUARD_PATH/$WIREGUARD_PUB_NIC-add-peer.conf"
 WIREGUARD_MANAGER="$WIREGUARD_PATH/wireguard-manager"
 WIREGUARD_INTERFACE="$WIREGUARD_PATH/wireguard-interface"
 WIREGUARD_PEER="$WIREGUARD_PATH/wireguard-peer"
-WIREGUARD_MANAGER_UPDATE="https://raw.githubusercontent.com/complexorganizations/wireguard-manager/main/wireguard-manager.sh"
+WIREGUARD_MANAGER_UPDATE="https://raw.githubusercontent.com/clear/wireguard-manager/main/wireguard-manager.sh"
 WIREGUARD_CONFIG_BACKUP="/var/backups/wireguard-manager.zip"
 WIREGUARD_IP_FORWARDING_CONFIG="/etc/sysctl.d/wireguard.conf"
 PIHOLE_ROOT="/etc/pihole"
@@ -458,7 +458,7 @@ if [ ! -f "$WIREGUARD_CONFIG" ]; then
   function set-port() {
     if [ -f "$WIREGUARD_INTERFACE" ]; then
       echo "What port do you want WireGuard server to listen to?"
-      echo "  1) 51820 (Recommended)"
+      echo "  1) 1140 (Recommended)"
       echo "  2) Custom (Advanced)"
       echo "  3) Random [1024-65535]"
       until [[ "$SERVER_PORT_SETTINGS" =~ ^[1-3]$ ]]; do
@@ -466,11 +466,11 @@ if [ ! -f "$WIREGUARD_CONFIG" ]; then
       done
       case $SERVER_PORT_SETTINGS in
       1)
-        SERVER_PORT="51820"
+        SERVER_PORT="1140"
         ;;
       2)
         until [[ "$SERVER_PORT" =~ ^[0-9]+$ ]] && [ "$SERVER_PORT" -ge 1024 ] && [ "$SERVER_PORT" -le 65535 ]; do
-          read -rp "Custom port [1024-65535]: " -e -i 51820 SERVER_PORT
+          read -rp "Custom port [1024-65535]: " -e -i 1140 SERVER_PORT
         done
         ;;
       3)
@@ -668,7 +668,7 @@ if [ ! -f "$WIREGUARD_CONFIG" ]; then
       echo "  2) PiHole"
       echo "  3) Custom (Advanced)"
       until [[ "$DNS_PROVIDER_SETTINGS" =~ ^[1-3]$ ]]; do
-        read -rp "DNS provider [1-3]: " -e -i 1 DNS_PROVIDER_SETTINGS
+        read -rp "DNS provider [1-3]: " -e -i 3 DNS_PROVIDER_SETTINGS
       done
       case $DNS_PROVIDER_SETTINGS in
       1)
@@ -1071,7 +1071,10 @@ else
   # Already installed what next?
   function wireguard-next-questions-interface() {
     if [ -f "$WIREGUARD_INTERFACE" ]; then
-      echo "What do you want to do?"
+      clear
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      echo "|      MENU WIREGUARD BY SSHINJECTOR.NET      |"
+      echo "-----------------------------------------------"
       echo "   1) Show WireGuard"
       echo "   2) Start WireGuard"
       echo "   3) Stop WireGuard"
@@ -1083,16 +1086,19 @@ else
       echo "   9) Update this script"
       echo "   10) Backup WireGuard"
       echo "   11) Restore WireGuard"
-      until [[ "$WIREGUARD_OPTIONS" =~ ^[0-9]+$ ]] && [ "$WIREGUARD_OPTIONS" -ge 1 ] && [ "$WIREGUARD_OPTIONS" -le 11 ]; do
-        read -rp "Select an Option [1-11]: " -e -i 1 WIREGUARD_OPTIONS
-      done
+      echo "-----------------------------------------------"
+      echo "       Klik CTRL+C to exit menu                "
+      echo "-----------------------------------------------"
+      read -p "Masukkan pilihan anda, kemudian tekan  ENTER: " WIREGUARD_OPTIONS
       case $WIREGUARD_OPTIONS in
       1) # WG Show
+        clear
         if [ -x "$(command -v wg)" ]; then
           wg show
         fi
         ;;
       2) # Enable & Start Wireguard
+        clear
         if [ -x "$(command -v wg)" ]; then
           if pgrep systemd-journal; then
             systemctl enable wg-quick@$WIREGUARD_PUB_NIC
@@ -1104,6 +1110,7 @@ else
         fi
         ;;
       3) # Disable & Stop WireGuard
+        clear
         if [ -x "$(command -v wg)" ]; then
           if pgrep systemd-journal; then
             systemctl disable wg-quick@$WIREGUARD_PUB_NIC
@@ -1115,6 +1122,7 @@ else
         fi
         ;;
       4) # Restart WireGuard
+        clear
         if [ -x "$(command -v wg)" ]; then
           if pgrep systemd-journal; then
             systemctl restart wg-quick@$WIREGUARD_PUB_NIC
@@ -1124,6 +1132,7 @@ else
         fi
         ;;
       5) # WireGuard add Peer
+        clear
         if [ -x "$(command -v wg)" ]; then
           if [ "$NEW_CLIENT_NAME" == "" ]; then
             echo "Lets name the WireGuard Peer, Use one word only, no special characters. (No Spaces)"
@@ -1176,11 +1185,11 @@ Endpoint = $SERVER_HOST$SERVER_PORT
 PersistentKeepalive = $NAT_CHOICE
 PresharedKey = $PRESHARED_KEY
 PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUARD_PUB_NIC.conf
-          qrencode -t ansiutf8 -l L <$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUARD_PUB_NIC.conf
           echo "Client config --> $WIREGUARD_CLIENT_PATH/$NEW_CLIENT_NAME-$WIREGUARD_PUB_NIC.conf"
         fi
         ;;
       6) # Remove WireGuard Peer
+        clear
         if [ -x "$(command -v wg)" ]; then
           echo "Which WireGuard user do you want to remove?"
           # shellcheck disable=SC2002
@@ -1203,6 +1212,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       7) # Reinstall Wireguard
+        clear
         if { [ "$DISTRO" == "ubuntu" ] || [ "$DISTRO" == "debian" ] || [ "$DISTRO" == "raspbian" ] || [ "$DISTRO" == "pop" ] || [ "$DISTRO" == "kali" ] || [ "$DISTRO" == "linuxmint" ]; }; then
           dpkg-reconfigure wireguard-dkms
           modprobe wireguard
@@ -1220,6 +1230,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       8) # Uninstall Wireguard and purging files
+        clear
         if [ -x "$(command -v wg)" ]; then
           if [ -f "$WIREGUARD_MANAGER" ]; then
             if pgrep systemd-journal; then
@@ -1334,6 +1345,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       9) # Update the script
+        clear
         if [ -x "$(command -v wg)" ]; then
           CURRENT_FILE_PATH="$(realpath "$0")"
           if [ -f "$CURRENT_FILE_PATH" ]; then
@@ -1346,6 +1358,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       10) # Backup Wireguard Config
+        clear
         if [ -x "$(command -v wg)" ]; then
           if [ -d "$WIREGUARD_PATH" ]; then
             rm -f $WIREGUARD_CONFIG_BACKUP
@@ -1356,6 +1369,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       11) # Restore Wireguard Config
+        clear
         if [ -x "$(command -v wg)" ]; then
           if [ -d "$WIREGUARD_PATH" ]; then
             rm -rf $WIREGUARD_PATH
@@ -1382,7 +1396,10 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
 
   function wireguard-next-questions-peer() {
     if [ -f "$WIREGUARD_PEER" ]; then
-      echo "What do you want to do?"
+      clear
+      echo "+++++++++++++++++++++++++++++++++++++++++++++++"
+      echo "|      MENU WIREGUARD BY SSHINJECTOR.NET      |"
+      echo "-----------------------------------------------"
       echo "   1) Show WireGuard"
       echo "   2) Start WireGuard"
       echo "   3) Stop WireGuard"
@@ -1392,16 +1409,19 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
       echo "   7) Update this script"
       echo "   8) Backup WireGuard"
       echo "   9) Restore WireGuard"
-      until [[ "$WIREGUARD_OPTIONS" =~ ^[0-9]+$ ]] && [ "$WIREGUARD_OPTIONS" -ge 1 ] && [ "$WIREGUARD_OPTIONS" -le 9 ]; do
-        read -rp "Select an Option [1-9]: " -e -i 1 WIREGUARD_OPTIONS
-      done
+      echo "-----------------------------------------------"
+      echo "       Klik CTRL+C to exit menu                "
+      echo "-----------------------------------------------"
+      read -p "Masukkan pilihan anda, kemudian tekan  ENTER: " WIREGUARD_OPTIONS
       case $WIREGUARD_OPTIONS in
       1) # WG Show
+        clear
         if [ -x "$(command -v wg)" ]; then
           wg show
         fi
         ;;
       2) # Enable & Start Wireguard
+        clear
         if [ -x "$(command -v wg)" ]; then
           if pgrep systemd-journal; then
             systemctl enable wg-quick@$WIREGUARD_PUB_NIC
@@ -1413,6 +1433,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       3) # Disable & Stop WireGuard
+        clear
         if [ -x "$(command -v wg)" ]; then
           if pgrep systemd-journal; then
             systemctl disable wg-quick@$WIREGUARD_PUB_NIC
@@ -1424,6 +1445,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       4) # Restart WireGuard
+        clear
         if [ -x "$(command -v wg)" ]; then
           if pgrep systemd-journal; then
             systemctl restart wg-quick@$WIREGUARD_PUB_NIC
@@ -1433,6 +1455,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       5) # Reinstall Wireguard
+        clear
         if { [ "$DISTRO" == "ubuntu" ] || [ "$DISTRO" == "debian" ] || [ "$DISTRO" == "raspbian" ] || [ "$DISTRO" == "pop" ] || [ "$DISTRO" == "kali" ] || [ "$DISTRO" == "linuxmint" ]; }; then
           dpkg-reconfigure wireguard-dkms
           modprobe wireguard
@@ -1450,6 +1473,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       6) # Uninstall Wireguard and purging files
+        clear
         if [ -f "$WIREGUARD_MANAGER" ]; then
           if [ -x "$(command -v wg)" ]; then
             if pgrep systemd-journal; then
@@ -1521,6 +1545,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       8) # Backup Wireguard Config
+        clear
         if [ -x "$(command -v wg)" ]; then
           if [ -d "$WIREGUARD_PATH" ]; then
             rm -f $WIREGUARD_CONFIG_BACKUP
@@ -1531,6 +1556,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
         fi
         ;;
       9) # Restore Wireguard Config
+        clear
         if [ -x "$(command -v wg)" ]; then
           if [ -d "$WIREGUARD_PATH" ]; then
             rm -rf $WIREGUARD_PATH
