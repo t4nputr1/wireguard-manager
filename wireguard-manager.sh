@@ -1387,6 +1387,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
           fi
         fi
         ;;
+        *) wireguard-manager.sh;;
       esac
     fi
   }
@@ -1573,6 +1574,7 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
             service wg-quick@$WIREGUARD_PUB_NIC restart
           fi
         fi
+        *) wireguard-manager.sh;;
         ;;
       esac
     fi
