@@ -1073,7 +1073,7 @@ else
     if [ -f "$WIREGUARD_INTERFACE" ]; then
       clear
       echo "+++++++++++++++++++++++++++++++++++++++++++++++"
-      echo "|      MENU WIREGUARD BY SSHINJECTOR.NET      |"
+      echo "|      \e[1;32MENU\e[0m WIREGUARD BY \e[1;35;60mSSHINJECTOR.NET\e[0m      |"
       echo "-----------------------------------------------"
       echo "   1) Show WireGuard"
       echo "   2) Start WireGuard"
@@ -1387,7 +1387,6 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
           fi
         fi
         ;;
-        *) wireguard-manager.sh;;
       esac
     fi
   }
@@ -1574,7 +1573,6 @@ PublicKey = $SERVER_PUBKEY" >>$WIREGUARD_CLIENT_PATH/"$NEW_CLIENT_NAME"-$WIREGUA
             service wg-quick@$WIREGUARD_PUB_NIC restart
           fi
         fi
-        *) wireguard-manager.sh;;
         ;;
       esac
     fi
